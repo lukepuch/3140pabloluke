@@ -6,8 +6,24 @@
 */
 
 process_t * current_process = NULL; 
-process_t * process_queue = NULL;
-process_t * process_tail = NULL;
+process_t * process_queue   = NULL;
+process_t * process_tail    = NULL;
+
+realtime_t current_time;
+//current_time.sec = 0;
+
+void PIT1_IRQHandler() {
+	__disable_irq();
+	
+	if ( current_time.msec >= 999 ) {
+		current_time.sec++;
+		current_time.msec = 0;
+	} else {
+		current_time.msec++;
+	}
+	
+	__enable_irq();
+}
 
 process_t * pop_front_process() {
 	if (!process_queue) return NULL;
@@ -74,6 +90,12 @@ void process_start (void) {
 	NVIC_EnableIRQ(PIT0_IRQn);
 	// Don't enable the timer yet. The scheduler will do so itself
 	
+	// Lab5 Code
+	PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 1000;
+	current_time.msec = 0;
+	current_time.sec  = 0;
+	NVIC_EnableIRQ(PIT1_IRQn);
+	
 	// Bail out fast if no processes were ever created
 	if (!process_queue) return;
 	process_begin();
@@ -90,9 +112,32 @@ int process_create (void (*f)(void), int n) {
 		return -1;
 	}
 	
+	proc->deadline = NULL;
+	proc->start    = NULL;
 	proc->sp = proc->orig_sp = sp;
 	proc->n = n;
 	proc->blocked = 0;
+	
+	push_tail_process(proc);
+	return 0;
+}
+
+int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *deadline){
+	unsigned int *sp = process_stack_init(f, n);
+	if (!sp) return -1;
+
+	process_t *proc = (process_t*) malloc(sizeof(process_t));
+
+	if (!proc) {
+		process_stack_free(sp, n);
+		return -1;
+	}	
+	  
+	proc->deadline 						= deadline;
+	proc->start              	= start;
+	proc->sp = proc->orig_sp 	= sp;
+	proc->n 									= n;
+	proc->blocked 						= 0;
 	
 	push_tail_process(proc);
 	return 0;

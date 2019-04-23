@@ -417,11 +417,6 @@
               <FilePath>.\utils.h</FilePath>
             </File>
             <File>
-              <FileName>shared_structs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\shared_structs.h</FilePath>
-            </File>
-            <File>
               <FileName>realtime.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\realtime.h</FilePath>
@@ -430,6 +425,11 @@
               <FileName>lab5_t0.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\lab5_t0.c</FilePath>
+            </File>
+            <File>
+              <FileName>shared_structs.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\shared_structs.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -460,7 +460,7 @@
       </component>
     </components>
     <files>
-      <file attr="config" category="header" name="MK64F12.h">
+      <file attr="config" category="header" name="MK64F12.h" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\MK64F12.h</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -468,7 +468,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="header" name="MK64F12_features.h">
+      <file attr="config" category="header" name="MK64F12_features.h" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\MK64F12_features.h</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -476,7 +476,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FN1M0xxx12_flash.scf">
+      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FN1M0xxx12_flash.scf" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\MK64FN1M0xxx12_flash.scf</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -484,7 +484,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FN1M0xxx12_ram.scf">
+      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FN1M0xxx12_ram.scf" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\MK64FN1M0xxx12_ram.scf</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -492,7 +492,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FX512xxx12_flash.scf">
+      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FX512xxx12_flash.scf" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\MK64FX512xxx12_flash.scf</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -500,7 +500,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FX512xxx12_ram.scf">
+      <file attr="config" category="linkerScript" condition="mdk" name="arm\MK64FX512xxx12_ram.scf" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\MK64FX512xxx12_ram.scf</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -508,7 +508,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="header" name="fsl_device_registers.h">
+      <file attr="config" category="header" name="fsl_device_registers.h" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\fsl_device_registers.h</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -516,7 +516,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="sourceAsm" condition="mdk" name="arm\startup_MK64F12.s">
+      <file attr="config" category="sourceAsm" condition="mdk" name="arm\startup_MK64F12.s" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\startup_MK64F12.s</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -524,7 +524,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="sourceC" name="system_MK64F12.c">
+      <file attr="config" category="sourceC" name="system_MK64F12.c" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\system_MK64F12.c</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>
@@ -532,7 +532,7 @@
           <targetInfo name="Target 1"/>
         </targetInfos>
       </file>
-      <file attr="config" category="header" name="system_MK64F12.h">
+      <file attr="config" category="header" name="system_MK64F12.h" version="1.0.0">
         <instance index="0">RTE\Device\MK64FN1M0VLL12\system_MK64F12.h</instance>
         <component Cclass="Device" Cgroup="Startup" Csub="MK64F12_startup" Cvendor="NXP" Cversion="1.0.0" condition="device.MK64F12_AND_CMSIS_Include_core_cm4"/>
         <package license="Licenses.txt" name="MK64F12_DFP" schemaVersion="1.4" url="http://mcuxpresso.nxp.com/cmsis_pack/repo/" vendor="NXP" version="11.0.0"/>

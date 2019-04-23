@@ -4,6 +4,7 @@
 #include <fsl_device_registers.h>
 #include "shared_structs.h"
 #include <stdlib.h>
+#include "realtime.h"
 /** Implement your structs here */
 
 /**
@@ -14,7 +15,9 @@ struct process_state {
 	unsigned int *orig_sp;
 	int n;
 	process_t *next;
-	int blocked;			
+	int blocked;	
+	realtime_t * start;
+	realtime_t * deadline;
 };
 
 /**
