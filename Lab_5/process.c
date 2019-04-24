@@ -9,6 +9,8 @@ process_t * current_process = NULL;
 process_t * process_queue   = NULL;
 process_t * process_tail    = NULL;
 
+process_t * realtime_queue	= NULL;
+
 realtime_t current_time;
 //current_time.sec = 0;
 
@@ -45,6 +47,21 @@ void push_tail_process(process_t *proc) {
 	}
 	process_tail = proc;
 	proc->next = NULL;
+}
+
+// Realtime functions:
+process_t * pop_front_rt_process() {
+	if (!realtime_queue) return NULL;
+	process_t *proc = realtime_queue;
+	realtime_queue = proc->next;
+	return proc;
+}
+
+void push_tail_rt_process(process_t *proc) {
+	if (!realtime_queue) {
+		process_queue = proc;
+	}
+	// push back until 
 }
 
 static void process_free(process_t *proc) {
@@ -141,6 +158,7 @@ int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *dea
 	proc->blocked 						= 0;
 	proc->priority						= 1;
 	
-	push_tail_process(proc);
+	// TODO: push to realtime_queue
+	push_tail_rt_process(proc);
 	return 0;
 }
