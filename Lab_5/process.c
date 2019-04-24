@@ -65,7 +65,7 @@ unsigned int * process_select (unsigned int * cursp) {
 		}
 	} else {
 		// Check if a process was running, free its resources if one just finished
-		if (current_process) {
+		if (current_process) {	
 			process_free(current_process);
 		}
 	}
@@ -112,11 +112,12 @@ int process_create (void (*f)(void), int n) {
 		return -1;
 	}
 	
-	proc->deadline = NULL;
-	proc->start    = NULL;
-	proc->sp = proc->orig_sp = sp;
-	proc->n = n;
-	proc->blocked = 0;
+	proc->deadline 						= NULL;
+	proc->start    						= NULL;
+	proc->sp = proc->orig_sp 	= sp;
+	proc->n 									= n;
+	proc->blocked  						= 0;
+	proc->priority 						= 0;
 	
 	push_tail_process(proc);
 	return 0;
@@ -138,6 +139,7 @@ int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *dea
 	proc->sp = proc->orig_sp 	= sp;
 	proc->n 									= n;
 	proc->blocked 						= 0;
+	proc->priority						= 1;
 	
 	push_tail_process(proc);
 	return 0;
