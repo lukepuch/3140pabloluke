@@ -157,12 +157,13 @@ ARM Macro Assembler    Page 3
               00000000 
               40037108 
               4003710C 
-Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
-erwork --depend=.\objects\3140.d -o.\objects\3140.o -I.\RTE\Device\MK64FN1M0VLL
-12 -I.\RTE\_Target_1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include -
-IC:\Keil_v5\ARM\PACK\NXP\MK64F12_DFP\11.0.0 --predefine="__EVAL SETA 1" --prede
-fine="__UVISION_VERSION SETA 526" --predefine="_RTE_ SETA 1" --predefine="CPU_M
-K64FN1M0VLL12 SETA 1" --list=.\listings\3140.lst 3140.s
+Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4 --apcs=interw
+ork --depend=.\objects\3140.d -o.\objects\3140.o -I.\RTE\Device\MK64FN1M0VLL12 
+-I.\RTE\_Target_1 -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include -IC:
+\Keil_v5\ARM\PACK\NXP\MK64F12_DFP\11.0.0 --predefine="__EVAL SETA 1" --predefin
+e="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 526" --predefine="_RT
+E_ SETA 1" --predefine="CPU_MK64FN1M0VLL12 SETA 1" --list=.\listings\3140.lst 3
+140.s
 
 
 

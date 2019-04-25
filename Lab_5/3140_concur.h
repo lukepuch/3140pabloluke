@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 #include <fsl_device_registers.h>
+#include "realtime.h"
 
 struct process_state;
 typedef struct process_state process_t;
@@ -55,10 +56,29 @@ void process_start (void);
 /* Create a new process. Return -1 if creation failed */
 int process_create (void (*f)(void), int n);
 
-void enqueue(process_t* p);
+process_t * pop_front_process();
 
-void dequeue();
+void push_tail_process(process_t *proc);
 
+process_t * pop_front_rt_ready_process();
+
+process_t * pop_front_rt_notready_process();
+
+realtime_t* realtime_add( realtime_t* t1, realtime_t* t2 );
+
+void push_onto_ready_queue (process_t * proc);
+
+void push_onto_notready_queue(process_t * proc);
+
+static void process_free(process_t *proc);
+
+int compare_rts_GET(realtime_t t1, realtime_t t2);
+
+int compare_rts_GT(realtime_t t1, realtime_t t2);
+
+void help_maintain();
+
+int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *deadline);
 
 /*------------------------------------------------------------------------
   

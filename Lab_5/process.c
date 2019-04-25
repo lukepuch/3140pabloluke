@@ -1,5 +1,5 @@
 #include "process.h"
-#include "realtime.h"
+//#include "realtime.h"
 
 /* the currently running process. current_process must be NULL if no process is running,
     otherwise it must point to the process_t of the currently running process
@@ -12,9 +12,11 @@ process_t * process_tail    	= NULL;
 process_t * rt_ready_queue		= NULL;
 process_t * rt_notready_queue = NULL;
 
+int process_deadline_met;
+int process_deadline_miss;
 
 realtime_t current_time;
-//current_time.sec = 0;
+
 
 void PIT1_IRQHandler() {
 	__disable_irq();
@@ -143,48 +145,128 @@ static void process_free(process_t *proc) {
 	free(proc);
 }
 
+// Compare two realtime_t vars. If t1 is greater than or equal to 
+// t2, return 1. Else return 0.
+int compare_rts_GET(realtime_t t1, realtime_t t2){
+	if(t1.sec > t2.sec){
+		return 1;
+	} else if (t1.sec < t2.sec){
+		return 0;
+	} else {
+		if(t1.msec >= t2.msec){
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+}
+
+// Compare two realtime_t vars. If t1 is greater than  
+// t2, return 1. Else return 0.
+int compare_rts_GT(realtime_t t1, realtime_t t2){
+	if(t1.sec > t2.sec){
+		return 1;
+	} else if (t1.sec < t2.sec){
+		return 0;
+	} else {
+		if(t1.msec > t2.msec){
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+}
+//helper function to maintain queues
+void help_maintain() {
+		process_t* itr = rt_notready_queue;
+		while ( itr!=NULL ) { 	
+		//iterate through entire queue (or
+		//until itr reaches still-not-ready process)
+			if ( compare_rts_GET(*itr->start, current_time) == 1 ) {	
+		//if itr is ready
+			push_onto_ready_queue( itr );
+			itr = itr->next;
+		}
+		else {
+			break;
+		}
+	}
+}
+
 /* Called by the runtime system to select another process.
    "cursp" = the stack pointer for the currently running process
 */
 unsigned int * process_select (unsigned int * cursp) {
-	if (cursp) {
-		// Suspending a process which has not yet finished, save state and make it the tail
-		current_process->sp = cursp;
-		
-		if(current_process->blocked == 0){
-			push_tail_process(current_process);
-		}
-	} else {
-		// Check if a process was running, free its resources if one just finished
-		if (current_process) {	
-			process_free(current_process);
+	help_maintain();
+	if ( cursp && ( current_process->start != NULL ) ) {
+// if process did NOT finish AND it is a realtime process
+	if(rt_ready_queue->abs_deadline < current_process->abs_deadline){
+		// if there are newly-ready processes whose deadline is earlier
+			process_t* temp = pop_front_rt_ready_process();
+			push_onto_ready_queue( current_process );
+			current_process = temp;
 		}
 	}
-	
-	// Select the new current process from the front of the queue
-	current_process = pop_front_process();
-	
-	if (current_process && current_process->blocked == 0) {
-		// Launch the process which was just popped off the queue
-		return current_process->sp;
-	}	else {
-		// No process was selected, exit the scheduler
-		return NULL;
+	else if ( cursp && ( current_process->start == NULL )  ) {
+	// if process did NOT finish AND it is NOT a realtime process
+		if ( rt_ready_queue != NULL ) {
+		// if there are ANY ready realtime processes, run the first one
+			push_tail_process( current_process );
+			current_process = pop_front_rt_ready_process();
+		}
+		else if ( process_queue != NULL ) {
+		// else, if there are normal processes, run them (do concurrency)
+			push_tail_process( current_process );
+			current_process = pop_front_process();
+		}
+	}
+	else {
+		if ( current_process ) {
+			if(current_process->start != NULL){
+				if(compare_rts_GT(*current_process->abs_deadline, current_time) == 0){
+					process_deadline_met++;
+				} else {
+					process_deadline_miss++;
+				}
+			}
+			process_free( current_process );
+			if ( rt_ready_queue != NULL ) {
+			// if a rt process is ready, run it
+				current_process = pop_front_rt_ready_process();
+			}
+			else if ( process_queue != NULL ) {
+			// else, if there are normal processes ready
+				current_process = pop_front_process();
+			}
+			else if ( rt_notready_queue != NULL ) {
+			// Nothing is ready: busy-wait for one to be ready
+				// re-enable (pause) P1 timer (real time counter)
+				NVIC_EnableIRQ(PIT1_IRQn);
+				while ( rt_ready_queue == NULL ) help_maintain();
+				// disable P1 timer (pause)
+				NVIC_DisableIRQ(PIT1_IRQn);
+			}
+		}
 	}
 }
 
+
+
+
 /* Starts up the concurrent execution */
 void process_start (void) {
-	SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
-	PIT->MCR = 0;
+	SIM->SCGC6 					 |= SIM_SCGC6_PIT_MASK;
+	PIT->MCR 							= 0;
 	PIT->CHANNEL[0].LDVAL = DEFAULT_SYSTEM_CLOCK / 10;
 	NVIC_EnableIRQ(PIT0_IRQn);
 	// Don't enable the timer yet. The scheduler will do so itself
 	
 	// Lab5 Code
 	PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 1000;
-	current_time.msec = 0;
-	current_time.sec  = 0;
+	current_time.msec 		= 0;
+	current_time.sec  		= 0;
+	process_deadline_met 	= 0;
+	process_deadline_miss = 0;
 	NVIC_EnableIRQ(PIT1_IRQn);
 	
 	// Bail out fast if no processes were ever created

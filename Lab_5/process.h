@@ -14,7 +14,9 @@
 extern process_t * current_process;
 extern process_t * process_queue;
 extern process_t * process_tail;
-extern realtime_t current_time;
+extern realtime_t  current_time;
+extern int process_deadline_met;
+extern int process_deadline_miss;
 
 void push_tail_process(process_t *proc);
 
