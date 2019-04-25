@@ -5,11 +5,13 @@
     otherwise it must point to the process_t of the currently running process
 */
 
-process_t * current_process = NULL; 
-process_t * process_queue   = NULL;
-process_t * process_tail    = NULL;
+process_t * current_process 	= NULL; 
+process_t * process_queue   	= NULL;
+process_t * process_tail    	= NULL;
 
-process_t * realtime_queue	= NULL;
+process_t * rt_ready_queue		= NULL;
+process_t * rt_notready_queue = NULL;
+
 
 realtime_t current_time;
 //current_time.sec = 0;
@@ -50,56 +52,87 @@ void push_tail_process(process_t *proc) {
 }
 
 // Realtime functions:
-process_t * pop_front_rt_process() {
-	if (!realtime_queue) return NULL;
-	process_t *proc = realtime_queue;
-	realtime_queue = proc->next;
-	return proc;
-	
+
+// Pop off ready queue
+process_t * pop_front_rt_ready_process() {
+	if (!rt_ready_queue) return NULL;
+	process_t *proc = rt_ready_queue;
+	rt_ready_queue = proc->next;
+	return proc;	
 }
 
-/*realtime_t realtime_add( t1, t2 ) {
-  
-  int sec = t1.sec + t2.sec;
-  int msec = t1.msec + t2.msec;
-  if ( msec > 999 )
-    msec = msec - 1000;
-    sec = sec + 1;
-   
+// Pop off notready queue
+process_t * pop_front_rt_notready_process() {
+	if (!rt_notready_queue) return NULL;
+	process_t *proc = rt_notready_queue;
+	rt_notready_queue = proc->next;
+	return proc;	
 }
-*/
 
-void push_tail_rt_process(process_t *proc) {
-	if (!realtime_queue) {
-		process_queue = proc;
+// Adding together two realtime variables
+realtime_t* realtime_add( realtime_t* t1, realtime_t* t2 ) {  
+	realtime_t* new_time;
+  new_time->sec  = t1->sec + t2->sec;
+  new_time->msec = t1->msec + t2->msec;
+  if ( new_time->msec > 999 ){
+    new_time->msec = new_time->msec - 1000;
+    new_time->sec = new_time->sec + 1;
 	}
-	// push back until 
+	
+	return new_time;
 }
 
+// Pushing onto ready queue by earliest absolute deadline
 void push_onto_ready_queue (process_t * proc){
-	if(realtime_queue == NULL && proc != NULL){
-		realtime_queue = proc;
+	if(rt_ready_queue == NULL && proc != NULL){
+		rt_ready_queue = proc;
 	}		
 	else{
 		if(proc != NULL)
 			{
-			process_t *temp = realtime_queue;
+			process_t *temp = rt_ready_queue;
 			process_t *prev = NULL;
-			while (temp != NULL){ //&& compare((temp -> deadline + temp -> start), ){
+			while (temp != NULL && proc->abs_deadline > temp->abs_deadline){ 
 				prev = temp;
 				temp = temp-> next;
 			}
-		if (temp == NULL){
-			prev -> next = proc;
-			proc -> next = NULL;
+			if(temp == rt_ready_queue) { // Condition for earliest deadline in queue
+				proc->next = rt_ready_queue;
+				rt_ready_queue = proc;
+			} else if(temp != NULL && prev != NULL) { // Condition for deadline in middle of queue
+				prev->next = proc;
+				proc->next = temp;				
+			} else { // Condition for latest deadline
+				prev->next = proc;
+				proc->next = NULL;
+			}
 		}
-		else if (temp == realtime_queue){
-			proc -> next = realtime_queue;
-			realtime_queue = proc;
-		}	
-		else{
-			prev -> next = proc;
-			proc -> next = temp;
+	}
+}
+
+// Pushing onto not ready queue by earliest start time
+void push_onto_notready_queue(process_t * proc){
+	if(rt_notready_queue == NULL && proc != NULL){
+		rt_notready_queue = proc;
+	}		
+	else {
+		if(proc != NULL)
+			{
+			process_t *temp = rt_notready_queue;
+			process_t *prev = NULL;
+			while (temp != NULL && proc->start > temp->start){
+				prev = temp;
+				temp = temp-> next;
+			}
+			if(temp == rt_notready_queue) { // Condition for earliest start in queue
+				proc->next = rt_notready_queue;
+				rt_notready_queue = proc;
+			} else if(temp != NULL && prev != NULL) { // Condition for start in middle of deadline
+				prev->next = proc;
+				proc->next = temp;				
+			} else { // Condition for latest start in queue
+				prev->next = proc;
+				proc->next = NULL;
 			}
 		}
 	}
@@ -172,6 +205,7 @@ int process_create (void (*f)(void), int n) {
 	
 	proc->deadline 						= NULL;
 	proc->start    						= NULL;
+	proc->abs_deadline				= NULL;
 	proc->sp = proc->orig_sp 	= sp;
 	proc->n 									= n;
 	proc->blocked  						= 0;
@@ -194,12 +228,13 @@ int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *dea
 	  
 	proc->deadline 						= deadline;
 	proc->start              	= start;
+	proc->abs_deadline				= realtime_add(start,deadline);
 	proc->sp = proc->orig_sp 	= sp;
 	proc->n 									= n;
 	proc->blocked 						= 0;
 	proc->ready								= 0;
 	
-	// TODO: push to realtime_queue
-	push_tail_rt_process(proc);
+	// TODO: push to rt_ready_queue
+	push_onto_notready_queue(proc);
 	return 0;
 }

@@ -1,0 +1,11 @@
+--cpu=Cortex-M4.fp --scatter "./RTE/Device/MK64FN1M0VLL12/MK64FN1M0xxx12_flash.scf"
+".\objects\3140.o"
+".\objects\3140_concur.o"
+".\objects\process.o"
+".\objects\utils.o"
+".\objects\lab5_t0.o"
+".\objects\startup_mk64f12.o"
+".\objects\system_mk64f12.o"
+--ro-base 0x00000000 --entry 0x00000000 --rw-base 0x14000000 --entry Reset_Handler --first __Vectors --strict --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\Lab_5.map" -o .\Objects\Lab_5.axf
