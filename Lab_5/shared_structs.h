@@ -18,7 +18,7 @@ struct process_state {
 	int blocked;	
 	realtime_t * start;
 	realtime_t * deadline;
-	int priority;
+	int ready;
 };
 
 /**

@@ -55,13 +55,54 @@ process_t * pop_front_rt_process() {
 	process_t *proc = realtime_queue;
 	realtime_queue = proc->next;
 	return proc;
+	
 }
+
+/*realtime_t realtime_add( t1, t2 ) {
+  
+  int sec = t1.sec + t2.sec;
+  int msec = t1.msec + t2.msec;
+  if ( msec > 999 )
+    msec = msec - 1000;
+    sec = sec + 1;
+   
+}
+*/
 
 void push_tail_rt_process(process_t *proc) {
 	if (!realtime_queue) {
 		process_queue = proc;
 	}
 	// push back until 
+}
+
+void push_onto_ready_queue (process_t * proc){
+	if(realtime_queue == NULL && proc != NULL){
+		realtime_queue = proc;
+	}		
+	else{
+		if(proc != NULL)
+			{
+			process_t *temp = realtime_queue;
+			process_t *prev = NULL;
+			while (temp != NULL){ //&& compare((temp -> deadline + temp -> start), ){
+				prev = temp;
+				temp = temp-> next;
+			}
+		if (temp == NULL){
+			prev -> next = proc;
+			proc -> next = NULL;
+		}
+		else if (temp == realtime_queue){
+			proc -> next = realtime_queue;
+			realtime_queue = proc;
+		}	
+		else{
+			prev -> next = proc;
+			proc -> next = temp;
+			}
+		}
+	}
 }
 
 static void process_free(process_t *proc) {
@@ -134,7 +175,7 @@ int process_create (void (*f)(void), int n) {
 	proc->sp = proc->orig_sp 	= sp;
 	proc->n 									= n;
 	proc->blocked  						= 0;
-	proc->priority 						= 0;
+	proc->ready 							= 0;
 	
 	push_tail_process(proc);
 	return 0;
@@ -156,7 +197,7 @@ int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *dea
 	proc->sp = proc->orig_sp 	= sp;
 	proc->n 									= n;
 	proc->blocked 						= 0;
-	proc->priority						= 1;
+	proc->ready								= 0;
 	
 	// TODO: push to realtime_queue
 	push_tail_rt_process(proc);
