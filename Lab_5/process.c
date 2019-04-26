@@ -1,5 +1,8 @@
-#include "process.h"
-//#include "realtime.h"
+//#include "process.h"
+#include "realtime.h"
+#include "3140_concur.h"
+#include <fsl_device_registers.h>
+#include "shared_structs.h"
 
 /* the currently running process. current_process must be NULL if no process is running,
     otherwise it must point to the process_t of the currently running process
@@ -215,9 +218,11 @@ unsigned int * process_select (unsigned int * cursp) {
 	// Else, if there are no ready realtime processes, no normal processes,
 	// but some not-ready realtime processes.
 	else if ( rt_ready_queue == NULL && process_queue == NULL && rt_notready_queue ) {
+		__enable_irq();
 		while ( rt_ready_queue == NULL ) {	// BUSY WAIT
 			help_maintain();
 		}
+		__disable_irq();
 		// Now, rt_ready_queue has something in it. Pop and run it.
 		current_process = pop_front_rt_ready_process();
 	}
@@ -247,7 +252,12 @@ void process_start (void) {
 	process_deadline_met 	= 0;
 	process_deadline_miss = 0;
 	NVIC_EnableIRQ(PIT1_IRQn);
-	
+	NVIC_SetPriority(SVCall_IRQn, 1);
+	NVIC_SetPriority(PIT0_IRQn, 2);
+	NVIC_SetPriority(PIT1_IRQn, 0);
+	// Don't enable the timer yet. The scheduler will do so itself
+	PIT->CHANNEL[1].TCTRL = PIT_TCTRL_TIE_MASK;
+	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN_MASK;	
 	// Bail out fast if no processes were ever created
 	if (!process_queue) return;
 	process_begin();
