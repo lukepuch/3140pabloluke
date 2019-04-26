@@ -36,7 +36,7 @@ Section Cross References
     process.o(i.process_start) refers to process.o(i.__NVIC_EnableIRQ) for __NVIC_EnableIRQ
     process.o(i.process_start) refers to process.o(i.__NVIC_SetPriority) for __NVIC_SetPriority
     process.o(i.process_start) refers to 3140.o(myProg) for process_begin
-    process.o(i.process_start) refers to process.o(.data) for current_time
+    process.o(i.process_start) refers to process.o(.data) for process_queue
     process.o(i.push_onto_notready_queue) refers to process.o(.data) for rt_notready_queue
     process.o(i.push_onto_ready_queue) refers to process.o(.data) for rt_ready_queue
     process.o(i.push_tail_process) refers to process.o(.data) for process_queue
@@ -210,44 +210,44 @@ Image Symbol Table
     i.LED_Initialize                         0x000006bc   Section        0  utils.o(i.LED_Initialize)
     i.LED_Off                                0x00000704   Section        0  utils.o(i.LED_Off)
     i.PIT1_IRQHandler                        0x00000730   Section        0  process.o(i.PIT1_IRQHandler)
-    i.SystemInit                             0x00000760   Section        0  system_mk64f12.o(i.SystemInit)
-    i.SystemInitHook                         0x00000780   Section        0  system_mk64f12.o(i.SystemInitHook)
-    i.__NVIC_EnableIRQ                       0x00000782   Section        0  process.o(i.__NVIC_EnableIRQ)
-    __NVIC_EnableIRQ                         0x00000783   Thumb Code    26  process.o(i.__NVIC_EnableIRQ)
-    i.__NVIC_SetPriority                     0x0000079c   Section        0  process.o(i.__NVIC_SetPriority)
-    __NVIC_SetPriority                       0x0000079d   Thumb Code    32  process.o(i.__NVIC_SetPriority)
-    i.__free$2region                         0x000007c4   Section        0  malloc2.o(i.__free$2region)
-    i.__get_PRIMASK                          0x00000814   Section        0  utils.o(i.__get_PRIMASK)
-    __get_PRIMASK                            0x00000815   Thumb Code     6  utils.o(i.__get_PRIMASK)
-    i.__malloc$2region                       0x0000081c   Section        0  malloc2.o(i.__malloc$2region)
-    i.__scatterload_copy                     0x00000888   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x00000896   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x00000898   Section       14  handlers.o(i.__scatterload_zeroinit)
-    i.__set_PRIMASK                          0x000008a6   Section        0  utils.o(i.__set_PRIMASK)
-    __set_PRIMASK                            0x000008a7   Thumb Code     6  utils.o(i.__set_PRIMASK)
-    i.delay                                  0x000008ac   Section        0  utils.o(i.delay)
-    i.help_maintain                          0x000008c0   Section        0  process.o(i.help_maintain)
-    i.main                                   0x000008fc   Section        0  lab5_t0.o(i.main)
-    i.mediumDelay                            0x00000970   Section        0  lab5_t0.o(i.mediumDelay)
-    i.pNRT                                   0x0000097c   Section        0  lab5_t0.o(i.pNRT)
-    i.pRT1                                   0x0000099a   Section        0  lab5_t0.o(i.pRT1)
-    i.pop_front_process                      0x000009b8   Section        0  process.o(i.pop_front_process)
-    i.pop_front_rt_ready_process             0x000009ec   Section        0  process.o(i.pop_front_rt_ready_process)
-    i.process_create                         0x00000a08   Section        0  process.o(i.process_create)
-    i.process_free                           0x00000a52   Section        0  process.o(i.process_free)
-    process_free                             0x00000a53   Thumb Code    20  process.o(i.process_free)
-    i.process_rt_create                      0x00000a68   Section        0  process.o(i.process_rt_create)
+    i.SystemInit                             0x0000075c   Section        0  system_mk64f12.o(i.SystemInit)
+    i.SystemInitHook                         0x0000077c   Section        0  system_mk64f12.o(i.SystemInitHook)
+    i.__NVIC_EnableIRQ                       0x0000077e   Section        0  process.o(i.__NVIC_EnableIRQ)
+    __NVIC_EnableIRQ                         0x0000077f   Thumb Code    26  process.o(i.__NVIC_EnableIRQ)
+    i.__NVIC_SetPriority                     0x00000798   Section        0  process.o(i.__NVIC_SetPriority)
+    __NVIC_SetPriority                       0x00000799   Thumb Code    32  process.o(i.__NVIC_SetPriority)
+    i.__free$2region                         0x000007c0   Section        0  malloc2.o(i.__free$2region)
+    i.__get_PRIMASK                          0x00000810   Section        0  utils.o(i.__get_PRIMASK)
+    __get_PRIMASK                            0x00000811   Thumb Code     6  utils.o(i.__get_PRIMASK)
+    i.__malloc$2region                       0x00000818   Section        0  malloc2.o(i.__malloc$2region)
+    i.__scatterload_copy                     0x00000884   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x00000892   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x00000894   Section       14  handlers.o(i.__scatterload_zeroinit)
+    i.__set_PRIMASK                          0x000008a2   Section        0  utils.o(i.__set_PRIMASK)
+    __set_PRIMASK                            0x000008a3   Thumb Code     6  utils.o(i.__set_PRIMASK)
+    i.delay                                  0x000008a8   Section        0  utils.o(i.delay)
+    i.help_maintain                          0x000008bc   Section        0  process.o(i.help_maintain)
+    i.main                                   0x000008f8   Section        0  lab5_t0.o(i.main)
+    i.mediumDelay                            0x0000096c   Section        0  lab5_t0.o(i.mediumDelay)
+    i.pNRT                                   0x00000978   Section        0  lab5_t0.o(i.pNRT)
+    i.pRT1                                   0x00000996   Section        0  lab5_t0.o(i.pRT1)
+    i.pop_front_process                      0x000009b4   Section        0  process.o(i.pop_front_process)
+    i.pop_front_rt_ready_process             0x000009e8   Section        0  process.o(i.pop_front_rt_ready_process)
+    i.process_create                         0x00000a04   Section        0  process.o(i.process_create)
+    i.process_free                           0x00000a50   Section        0  process.o(i.process_free)
+    process_free                             0x00000a51   Thumb Code    20  process.o(i.process_free)
+    i.process_rt_create                      0x00000a64   Section        0  process.o(i.process_rt_create)
     i.process_select                         0x00000aec   Section        0  process.o(i.process_select)
     i.process_stack_free                     0x00000be0   Section        0  3140_concur.o(i.process_stack_free)
     i.process_stack_init                     0x00000bf4   Section        0  3140_concur.o(i.process_stack_init)
     i.process_start                          0x00000c54   Section        0  process.o(i.process_start)
-    i.push_onto_notready_queue               0x00000cf0   Section        0  process.o(i.push_onto_notready_queue)
-    i.push_onto_ready_queue                  0x00000d44   Section        0  process.o(i.push_onto_ready_queue)
-    i.push_tail_process                      0x00000d98   Section        0  process.o(i.push_tail_process)
-    i.shortDelay                             0x00000dc0   Section        0  lab5_t0.o(i.shortDelay)
-    myProg                                   0x00000dc8   Section      124  3140.o(myProg)
-    SVC0_begin                               0x00000de1   Thumb Code     0  3140.o(myProg)
-    SVC1_terminate                           0x00000deb   Thumb Code     0  3140.o(myProg)
+    i.push_onto_notready_queue               0x00000cd4   Section        0  process.o(i.push_onto_notready_queue)
+    i.push_onto_ready_queue                  0x00000d2c   Section        0  process.o(i.push_onto_ready_queue)
+    i.push_tail_process                      0x00000d84   Section        0  process.o(i.push_tail_process)
+    i.shortDelay                             0x00000dac   Section        0  lab5_t0.o(i.shortDelay)
+    myProg                                   0x00000db4   Section      124  3140.o(myProg)
+    SVC0_begin                               0x00000dcd   Thumb Code     0  3140.o(myProg)
+    SVC1_terminate                           0x00000dd7   Thumb Code     0  3140.o(myProg)
     .data                                    0x20000000   Section       36  process.o(.data)
     .data                                    0x20000024   Section       24  lab5_t0.o(.data)
     .data                                    0x2000003c   Section        4  mvars.o(.data)
@@ -425,39 +425,39 @@ Image Symbol Table
     LEDRed_Toggle                            0x000006ad   Thumb Code    10  utils.o(i.LEDRed_Toggle)
     LED_Initialize                           0x000006bd   Thumb Code    50  utils.o(i.LED_Initialize)
     LED_Off                                  0x00000705   Thumb Code    36  utils.o(i.LED_Off)
-    PIT1_IRQHandler                          0x00000731   Thumb Code    44  process.o(i.PIT1_IRQHandler)
-    SystemInit                               0x00000761   Thumb Code    28  system_mk64f12.o(i.SystemInit)
-    SystemInitHook                           0x00000781   Thumb Code     2  system_mk64f12.o(i.SystemInitHook)
-    free                                     0x000007c5   Thumb Code    76  malloc2.o(i.__free$2region)
-    malloc                                   0x0000081d   Thumb Code    92  malloc2.o(i.__malloc$2region)
-    __scatterload_copy                       0x00000889   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x00000897   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x00000899   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    delay                                    0x000008ad   Thumb Code    14  utils.o(i.delay)
-    help_maintain                            0x000008c1   Thumb Code    52  process.o(i.help_maintain)
-    main                                     0x000008fd   Thumb Code    94  lab5_t0.o(i.main)
-    mediumDelay                              0x00000971   Thumb Code    12  lab5_t0.o(i.mediumDelay)
-    pNRT                                     0x0000097d   Thumb Code    30  lab5_t0.o(i.pNRT)
-    pRT1                                     0x0000099b   Thumb Code    30  lab5_t0.o(i.pRT1)
-    pop_front_process                        0x000009b9   Thumb Code    42  process.o(i.pop_front_process)
-    pop_front_rt_ready_process               0x000009ed   Thumb Code    24  process.o(i.pop_front_rt_ready_process)
-    process_create                           0x00000a09   Thumb Code    74  process.o(i.process_create)
-    process_rt_create                        0x00000a69   Thumb Code   126  process.o(i.process_rt_create)
+    PIT1_IRQHandler                          0x00000731   Thumb Code    40  process.o(i.PIT1_IRQHandler)
+    SystemInit                               0x0000075d   Thumb Code    28  system_mk64f12.o(i.SystemInit)
+    SystemInitHook                           0x0000077d   Thumb Code     2  system_mk64f12.o(i.SystemInitHook)
+    free                                     0x000007c1   Thumb Code    76  malloc2.o(i.__free$2region)
+    malloc                                   0x00000819   Thumb Code    92  malloc2.o(i.__malloc$2region)
+    __scatterload_copy                       0x00000885   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x00000893   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x00000895   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    delay                                    0x000008a9   Thumb Code    14  utils.o(i.delay)
+    help_maintain                            0x000008bd   Thumb Code    52  process.o(i.help_maintain)
+    main                                     0x000008f9   Thumb Code    94  lab5_t0.o(i.main)
+    mediumDelay                              0x0000096d   Thumb Code    12  lab5_t0.o(i.mediumDelay)
+    pNRT                                     0x00000979   Thumb Code    30  lab5_t0.o(i.pNRT)
+    pRT1                                     0x00000997   Thumb Code    30  lab5_t0.o(i.pRT1)
+    pop_front_process                        0x000009b5   Thumb Code    42  process.o(i.pop_front_process)
+    pop_front_rt_ready_process               0x000009e9   Thumb Code    24  process.o(i.pop_front_rt_ready_process)
+    process_create                           0x00000a05   Thumb Code    76  process.o(i.process_create)
+    process_rt_create                        0x00000a65   Thumb Code   130  process.o(i.process_rt_create)
     process_select                           0x00000aed   Thumb Code   216  process.o(i.process_select)
     process_stack_free                       0x00000be1   Thumb Code    18  3140_concur.o(i.process_stack_free)
     process_stack_init                       0x00000bf5   Thumb Code    90  3140_concur.o(i.process_stack_init)
-    process_start                            0x00000c55   Thumb Code   128  process.o(i.process_start)
-    push_onto_notready_queue                 0x00000cf1   Thumb Code    80  process.o(i.push_onto_notready_queue)
-    push_onto_ready_queue                    0x00000d45   Thumb Code    80  process.o(i.push_onto_ready_queue)
-    push_tail_process                        0x00000d99   Thumb Code    32  process.o(i.push_tail_process)
-    shortDelay                               0x00000dc1   Thumb Code     8  lab5_t0.o(i.shortDelay)
-    SVC_Handler                              0x00000dc9   Thumb Code     0  3140.o(myProg)
-    process_terminated                       0x00000def   Thumb Code     0  3140.o(myProg)
-    process_begin                            0x00000df3   Thumb Code     0  3140.o(myProg)
-    process_blocked                          0x00000df9   Thumb Code     0  3140.o(myProg)
-    PIT0_IRQHandler                          0x00000dff   Thumb Code     0  3140.o(myProg)
-    Region$$Table$$Base                      0x00000e44   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x00000e54   Number         0  anon$$obj.o(Region$$Table)
+    process_start                            0x00000c55   Thumb Code   112  process.o(i.process_start)
+    push_onto_notready_queue                 0x00000cd5   Thumb Code    84  process.o(i.push_onto_notready_queue)
+    push_onto_ready_queue                    0x00000d2d   Thumb Code    84  process.o(i.push_onto_ready_queue)
+    push_tail_process                        0x00000d85   Thumb Code    32  process.o(i.push_tail_process)
+    shortDelay                               0x00000dad   Thumb Code     8  lab5_t0.o(i.shortDelay)
+    SVC_Handler                              0x00000db5   Thumb Code     0  3140.o(myProg)
+    process_terminated                       0x00000ddb   Thumb Code     0  3140.o(myProg)
+    process_begin                            0x00000ddf   Thumb Code     0  3140.o(myProg)
+    process_blocked                          0x00000de5   Thumb Code     0  3140.o(myProg)
+    PIT0_IRQHandler                          0x00000deb   Thumb Code     0  3140.o(myProg)
+    Region$$Table$$Base                      0x00000e30   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x00000e40   Number         0  anon$$obj.o(Region$$Table)
     current_process                          0x20000000   Data           4  process.o(.data)
     process_queue                            0x20000004   Data           4  process.o(.data)
     process_tail                             0x20000008   Data           4  process.o(.data)
@@ -483,7 +483,7 @@ Memory Map of the image
 
   Image Entry point : 0x00000411
 
-  Load Region LR_m_text (Base: 0x00000000, Size: 0x00000e9c, Max: 0x00100000, ABSOLUTE)
+  Load Region LR_m_text (Base: 0x00000000, Size: 0x00000e88, Max: 0x00100000, ABSOLUTE)
 
     Execution Region VECTOR_ROM (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x00000400, Max: 0x00000400, ABSOLUTE)
 
@@ -499,7 +499,7 @@ Memory Map of the image
     0x00000400   0x00000400   0x00000010   Data   RO          341    FlashConfig         startup_mk64f12.o
 
 
-    Execution Region ER_m_text (Exec base: 0x00000410, Load base: 0x00000410, Size: 0x00000a44, Max: 0x000ffbf0, ABSOLUTE)
+    Execution Region ER_m_text (Exec base: 0x00000410, Load base: 0x00000410, Size: 0x00000a30, Max: 0x000ffbf0, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -521,68 +521,67 @@ Memory Map of the image
     0x000006ac   0x000006ac   0x00000010   Code   RO          209    i.LEDRed_Toggle     utils.o
     0x000006bc   0x000006bc   0x00000048   Code   RO          210    i.LED_Initialize    utils.o
     0x00000704   0x00000704   0x0000002c   Code   RO          211    i.LED_Off           utils.o
-    0x00000730   0x00000730   0x00000030   Code   RO           83    i.PIT1_IRQHandler   process.o
-    0x00000760   0x00000760   0x00000020   Code   RO          350    i.SystemInit        system_mk64f12.o
-    0x00000780   0x00000780   0x00000002   Code   RO          351    i.SystemInitHook    system_mk64f12.o
-    0x00000782   0x00000782   0x0000001a   Code   RO           84    i.__NVIC_EnableIRQ  process.o
-    0x0000079c   0x0000079c   0x00000028   Code   RO           85    i.__NVIC_SetPriority  process.o
-    0x000007c4   0x000007c4   0x00000050   Code   RO          404    i.__free$2region    mc_w.l(malloc2.o)
-    0x00000814   0x00000814   0x00000006   Code   RO          212    i.__get_PRIMASK     utils.o
-    0x0000081a   0x0000081a   0x00000002   PAD
-    0x0000081c   0x0000081c   0x0000006c   Code   RO          405    i.__malloc$2region  mc_w.l(malloc2.o)
-    0x00000888   0x00000888   0x0000000e   Code   RO          456    i.__scatterload_copy  mc_w.l(handlers.o)
-    0x00000896   0x00000896   0x00000002   Code   RO          457    i.__scatterload_null  mc_w.l(handlers.o)
-    0x00000898   0x00000898   0x0000000e   Code   RO          458    i.__scatterload_zeroinit  mc_w.l(handlers.o)
-    0x000008a6   0x000008a6   0x00000006   Code   RO          213    i.__set_PRIMASK     utils.o
-    0x000008ac   0x000008ac   0x00000014   Code   RO          214    i.delay             utils.o
-    0x000008c0   0x000008c0   0x0000003c   Code   RO           86    i.help_maintain     process.o
-    0x000008fc   0x000008fc   0x00000074   Code   RO          292    i.main              lab5_t0.o
-    0x00000970   0x00000970   0x0000000c   Code   RO          293    i.mediumDelay       lab5_t0.o
-    0x0000097c   0x0000097c   0x0000001e   Code   RO          294    i.pNRT              lab5_t0.o
-    0x0000099a   0x0000099a   0x0000001e   Code   RO          295    i.pRT1              lab5_t0.o
-    0x000009b8   0x000009b8   0x00000034   Code   RO           87    i.pop_front_process  process.o
-    0x000009ec   0x000009ec   0x0000001c   Code   RO           89    i.pop_front_rt_ready_process  process.o
-    0x00000a08   0x00000a08   0x0000004a   Code   RO           90    i.process_create    process.o
-    0x00000a52   0x00000a52   0x00000014   Code   RO           91    i.process_free      process.o
-    0x00000a66   0x00000a66   0x00000002   PAD
-    0x00000a68   0x00000a68   0x00000084   Code   RO           92    i.process_rt_create  process.o
+    0x00000730   0x00000730   0x0000002c   Code   RO           83    i.PIT1_IRQHandler   process.o
+    0x0000075c   0x0000075c   0x00000020   Code   RO          350    i.SystemInit        system_mk64f12.o
+    0x0000077c   0x0000077c   0x00000002   Code   RO          351    i.SystemInitHook    system_mk64f12.o
+    0x0000077e   0x0000077e   0x0000001a   Code   RO           84    i.__NVIC_EnableIRQ  process.o
+    0x00000798   0x00000798   0x00000028   Code   RO           85    i.__NVIC_SetPriority  process.o
+    0x000007c0   0x000007c0   0x00000050   Code   RO          404    i.__free$2region    mc_w.l(malloc2.o)
+    0x00000810   0x00000810   0x00000006   Code   RO          212    i.__get_PRIMASK     utils.o
+    0x00000816   0x00000816   0x00000002   PAD
+    0x00000818   0x00000818   0x0000006c   Code   RO          405    i.__malloc$2region  mc_w.l(malloc2.o)
+    0x00000884   0x00000884   0x0000000e   Code   RO          456    i.__scatterload_copy  mc_w.l(handlers.o)
+    0x00000892   0x00000892   0x00000002   Code   RO          457    i.__scatterload_null  mc_w.l(handlers.o)
+    0x00000894   0x00000894   0x0000000e   Code   RO          458    i.__scatterload_zeroinit  mc_w.l(handlers.o)
+    0x000008a2   0x000008a2   0x00000006   Code   RO          213    i.__set_PRIMASK     utils.o
+    0x000008a8   0x000008a8   0x00000014   Code   RO          214    i.delay             utils.o
+    0x000008bc   0x000008bc   0x0000003c   Code   RO           86    i.help_maintain     process.o
+    0x000008f8   0x000008f8   0x00000074   Code   RO          292    i.main              lab5_t0.o
+    0x0000096c   0x0000096c   0x0000000c   Code   RO          293    i.mediumDelay       lab5_t0.o
+    0x00000978   0x00000978   0x0000001e   Code   RO          294    i.pNRT              lab5_t0.o
+    0x00000996   0x00000996   0x0000001e   Code   RO          295    i.pRT1              lab5_t0.o
+    0x000009b4   0x000009b4   0x00000034   Code   RO           87    i.pop_front_process  process.o
+    0x000009e8   0x000009e8   0x0000001c   Code   RO           89    i.pop_front_rt_ready_process  process.o
+    0x00000a04   0x00000a04   0x0000004c   Code   RO           90    i.process_create    process.o
+    0x00000a50   0x00000a50   0x00000014   Code   RO           91    i.process_free      process.o
+    0x00000a64   0x00000a64   0x00000088   Code   RO           92    i.process_rt_create  process.o
     0x00000aec   0x00000aec   0x000000f4   Code   RO           93    i.process_select    process.o
     0x00000be0   0x00000be0   0x00000012   Code   RO           12    i.process_stack_free  3140_concur.o
     0x00000bf2   0x00000bf2   0x00000002   PAD
     0x00000bf4   0x00000bf4   0x00000060   Code   RO           13    i.process_stack_init  3140_concur.o
-    0x00000c54   0x00000c54   0x0000009c   Code   RO           94    i.process_start     process.o
-    0x00000cf0   0x00000cf0   0x00000054   Code   RO           95    i.push_onto_notready_queue  process.o
-    0x00000d44   0x00000d44   0x00000054   Code   RO           96    i.push_onto_ready_queue  process.o
-    0x00000d98   0x00000d98   0x00000028   Code   RO           97    i.push_tail_process  process.o
-    0x00000dc0   0x00000dc0   0x00000008   Code   RO          296    i.shortDelay        lab5_t0.o
-    0x00000dc8   0x00000dc8   0x0000007c   Code   RO            4    myProg              3140.o
-    0x00000e44   0x00000e44   0x00000010   Data   RO          454    Region$$Table       anon$$obj.o
+    0x00000c54   0x00000c54   0x00000080   Code   RO           94    i.process_start     process.o
+    0x00000cd4   0x00000cd4   0x00000058   Code   RO           95    i.push_onto_notready_queue  process.o
+    0x00000d2c   0x00000d2c   0x00000058   Code   RO           96    i.push_onto_ready_queue  process.o
+    0x00000d84   0x00000d84   0x00000028   Code   RO           97    i.push_tail_process  process.o
+    0x00000dac   0x00000dac   0x00000008   Code   RO          296    i.shortDelay        lab5_t0.o
+    0x00000db4   0x00000db4   0x0000007c   Code   RO            4    myProg              3140.o
+    0x00000e30   0x00000e30   0x00000010   Data   RO          454    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_m_data (Exec base: 0x1fff0000, Load base: 0x00000e54, Size: 0x00000000, Max: 0x00010000, ABSOLUTE)
+    Execution Region RW_m_data (Exec base: 0x1fff0000, Load base: 0x00000e40, Size: 0x00000000, Max: 0x00010000, ABSOLUTE)
 
     **** No section assigned to this execution region ****
 
 
-    Execution Region RW_m_data_2 (Exec base: 0x20000000, Load base: 0x00000e54, Size: 0x00000048, Max: 0x0002f800, ABSOLUTE)
+    Execution Region RW_m_data_2 (Exec base: 0x20000000, Load base: 0x00000e40, Size: 0x00000048, Max: 0x0002f800, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x00000e54   0x00000024   Data   RW           98    .data               process.o
-    0x20000024   0x00000e78   0x00000018   Data   RW          297    .data               lab5_t0.o
-    0x2000003c   0x00000e90   0x00000004   Data   RW          450    .data               mc_w.l(mvars.o)
-    0x20000040   0x00000e94   0x00000004   Data   RW          451    .data               mc_w.l(mvars.o)
-    0x20000044   0x00000e98   0x00000004   Data   RW            3    myData              3140.o
+    0x20000000   0x00000e40   0x00000024   Data   RW           98    .data               process.o
+    0x20000024   0x00000e64   0x00000018   Data   RW          297    .data               lab5_t0.o
+    0x2000003c   0x00000e7c   0x00000004   Data   RW          450    .data               mc_w.l(mvars.o)
+    0x20000040   0x00000e80   0x00000004   Data   RW          451    .data               mc_w.l(mvars.o)
+    0x20000044   0x00000e84   0x00000004   Data   RW            3    myData              3140.o
 
 
-    Execution Region ARM_LIB_HEAP (Exec base: 0x20000048, Load base: 0x00000e9c, Size: 0x00000400, Max: 0x00000400, ABSOLUTE)
+    Execution Region ARM_LIB_HEAP (Exec base: 0x20000048, Load base: 0x00000e88, Size: 0x00000400, Max: 0x00000400, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
     0x20000048        -       0x00000400   Zero   RW            1    ARM_LIB_HEAP.bss    anon$$obj.o
 
 
-    Execution Region ARM_LIB_STACK (Exec base: 0x2002fc00, Load base: 0x00000e9c, Size: 0x00000400, Max: 0x00000400, ABSOLUTE)
+    Execution Region ARM_LIB_STACK (Exec base: 0x2002fc00, Load base: 0x00000e88, Size: 0x00000400, Max: 0x00000400, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -598,16 +597,16 @@ Image component sizes
 
        124         24          0          4          0        332   3140.o
        114          6          0          0          0     473068   3140_concur.o
-       196         22          0         24          0       2649   lab5_t0.o
-      1088        112          0         36          0      39177   process.o
-       460        218       1040          0          0       3240   startup_mk64f12.o
+       196         22          0         24          0       2657   lab5_t0.o
+      1070        100          0         36          0      39225   process.o
+       460        218       1040          0          0       3244   startup_mk64f12.o
         34          4          0          0          0        998   system_mk64f12.o
-       316         74          0          0          0       9523   utils.o
+       316         74          0          0          0       9531   utils.o
 
     ----------------------------------------------------------------------
-      2338        460       1056         64       2048     528987   Object Totals
+      2318        448       1056         64       2048     529055   Object Totals
          0          0         16          0       2048          0   (incl. Generated)
-         6          0          0          0          0          0   (incl. Padding)
+         4          0          0          0          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -646,15 +645,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      2612        496       1056         72       2048     527755   Grand Totals
-      2612        496       1056         72       2048     527755   ELF Image Totals
-      2612        496       1056         72          0          0   ROM Totals
+      2592        484       1056         72       2048     527823   Grand Totals
+      2592        484       1056         72       2048     527823   ELF Image Totals
+      2592        484       1056         72          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 3668 (   3.58kB)
+    Total RO  Size (Code + RO Data)                 3648 (   3.56kB)
     Total RW  Size (RW Data + ZI Data)              2120 (   2.07kB)
-    Total ROM Size (Code + RO Data + RW Data)       3740 (   3.65kB)
+    Total ROM Size (Code + RO Data + RW Data)       3720 (   3.63kB)
 
 ==============================================================================
 

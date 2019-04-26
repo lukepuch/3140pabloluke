@@ -23,7 +23,7 @@ realtime_t current_time				= {0,0};
 
 
 void PIT1_IRQHandler() {
-	__disable_irq();
+	//__disable_irq();
 	
 	if ( current_time.msec >= 999 ) {
 		current_time.sec++;
@@ -32,7 +32,7 @@ void PIT1_IRQHandler() {
 		current_time.msec++;
 	}
 	
-	__enable_irq();
+	//__enable_irq();
 }
 
 //-------------------------------------------------------------------
@@ -90,6 +90,7 @@ process_t * pop_front_rt_notready_process() {
 void push_onto_ready_queue (process_t * proc){
 	if(rt_ready_queue == NULL && proc != NULL){
 		rt_ready_queue = proc;
+		proc->next = NULL;
 	}		
 	else{
 		if(proc != NULL)
@@ -121,6 +122,7 @@ void push_onto_ready_queue (process_t * proc){
 void push_onto_notready_queue(process_t * proc){
 	if(rt_notready_queue == NULL && proc != NULL){
 		rt_notready_queue = proc;
+		proc->next = NULL;
 	}		
 	else {
 		if(proc != NULL)
@@ -218,15 +220,14 @@ unsigned int * process_select (unsigned int * cursp) {
 	// Else, if there are no ready realtime processes, no normal processes,
 	// but some not-ready realtime processes.
 	else if ( rt_ready_queue == NULL && process_queue == NULL && rt_notready_queue ) {
-		__enable_irq();
+		__enable_irq();			//
 		while ( rt_ready_queue == NULL ) {	// BUSY WAIT
-			help_maintain();
+			help_maintain();	//
 		}
 		__disable_irq();
 		// Now, rt_ready_queue has something in it. Pop and run it.
 		current_process = pop_front_rt_ready_process();
 	}
-	
 	// Now, return sp.
 	if ( current_process ) {
 		// Launch the process which was just popped off the queue
@@ -244,20 +245,16 @@ void process_start (void) {
 	PIT->CHANNEL[0].LDVAL = DEFAULT_SYSTEM_CLOCK / 10;
 	NVIC_EnableIRQ(PIT0_IRQn);
 	// Don't enable the timer yet. The scheduler will do so itself
-	
 	// Lab5 Code
 	PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 1000;
-	current_time.msec 		= 0;
-	current_time.sec  		= 0;
-	process_deadline_met 	= 0;
-	process_deadline_miss = 0;
 	NVIC_EnableIRQ(PIT1_IRQn);
 	NVIC_SetPriority(SVCall_IRQn, 1);
-	NVIC_SetPriority(PIT0_IRQn, 2);
-	NVIC_SetPriority(PIT1_IRQn, 0);
+	NVIC_SetPriority(PIT0_IRQn, 1);
+	NVIC_SetPriority(PIT1_IRQn, 0);	// PIT1 is highest priority
 	// Don't enable the timer yet. The scheduler will do so itself
 	PIT->CHANNEL[1].TCTRL = PIT_TCTRL_TIE_MASK;
-	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN_MASK;	
+	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN_MASK;
+
 	// Bail out fast if no processes were ever created
 	if (!process_queue) return;
 	process_begin();
@@ -274,11 +271,12 @@ int process_create (void (*f)(void), int n) {
 		return -1;
 	}
 
-	proc->sp = proc->orig_sp 		= sp;
-	proc->n 										= n;
-	proc->blocked  							= 0;
-	proc->rt 										= 0;
+	proc->sp = proc->orig_sp 	= sp;
+	proc->n 									= n;
+	proc->blocked  						= 0;
+	proc->rt 									= 0;
 	
+	proc->next								= NULL;
 	push_tail_process(proc);
 	return 0;
 }
@@ -302,6 +300,7 @@ int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *dea
 	proc->blocked 						= 0;
 	proc->rt									= 1;
 
+	proc->next								= NULL;
 	push_onto_notready_queue(proc);
 	return 0;
 }

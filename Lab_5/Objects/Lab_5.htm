@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\Lab_5.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\Lab_5.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Apr 26 14:58:10 2019
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Apr 26 18:15:38 2019
 <BR><P>
 <H3>Maximum Stack Usage =         84 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -719,7 +719,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[3b]"></a>PIT1_IRQHandler</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, process.o(i.PIT1_IRQHandler))
+<P><STRONG><a name="[3b]"></a>PIT1_IRQHandler</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, process.o(i.PIT1_IRQHandler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_mk64f12.o(RESET)
 </UL>
 <P><STRONG><a name="[62]"></a>SystemInit</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, system_mk64f12.o(i.SystemInit))
@@ -815,7 +815,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_select
 </UL>
 
-<P><STRONG><a name="[a2]"></a>process_create</STRONG> (Thumb, 74 bytes, Stack size 24 bytes, process.o(i.process_create))
+<P><STRONG><a name="[a2]"></a>process_create</STRONG> (Thumb, 76 bytes, Stack size 24 bytes, process.o(i.process_create))
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = process_create &rArr; process_stack_init &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
@@ -826,7 +826,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[a3]"></a>process_rt_create</STRONG> (Thumb, 126 bytes, Stack size 32 bytes, process.o(i.process_rt_create))
+<P><STRONG><a name="[a3]"></a>process_rt_create</STRONG> (Thumb, 130 bytes, Stack size 32 bytes, process.o(i.process_rt_create))
 <BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = process_rt_create &rArr; process_stack_init &rArr; malloc
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
@@ -869,7 +869,7 @@ Global Symbols
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_create
 </UL>
 
-<P><STRONG><a name="[a4]"></a>process_start</STRONG> (Thumb, 128 bytes, Stack size 8 bytes, process.o(i.process_start))
+<P><STRONG><a name="[a4]"></a>process_start</STRONG> (Thumb, 112 bytes, Stack size 8 bytes, process.o(i.process_start))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16 + Unknown Stack Size
 <LI>Call Chain = process_start &rArr; __NVIC_SetPriority
 </UL>
@@ -880,13 +880,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[b0]"></a>push_onto_notready_queue</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, process.o(i.push_onto_notready_queue))
+<P><STRONG><a name="[b0]"></a>push_onto_notready_queue</STRONG> (Thumb, 84 bytes, Stack size 8 bytes, process.o(i.push_onto_notready_queue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = push_onto_notready_queue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;process_rt_create
 </UL>
 
-<P><STRONG><a name="[a0]"></a>push_onto_ready_queue</STRONG> (Thumb, 80 bytes, Stack size 8 bytes, process.o(i.push_onto_ready_queue))
+<P><STRONG><a name="[a0]"></a>push_onto_ready_queue</STRONG> (Thumb, 84 bytes, Stack size 8 bytes, process.o(i.push_onto_ready_queue))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = push_onto_ready_queue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;help_maintain
