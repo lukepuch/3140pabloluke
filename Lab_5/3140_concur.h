@@ -56,25 +56,25 @@ void process_start (void);
 /* Create a new process. Return -1 if creation failed */
 int process_create (void (*f)(void), int n);
 
+/* Pop from front of process_queue */
 process_t * pop_front_process();
 
+/* Push proc on tail of process_queue */
 void push_tail_process(process_t *proc);
 
+/* Pop from front of rt_ready_queue */
 process_t * pop_front_rt_ready_process();
 
+/* Pop from front of rt_notready_queue */
 process_t * pop_front_rt_notready_process();
 
-realtime_t* realtime_add( realtime_t* t1, realtime_t* t2 );
-
+/* Push proc back onto rt_ready_queue (EDF) */
 void push_onto_ready_queue (process_t * proc);
 
+/* Push proc back onto rt_notready_queue (earliest start time first) */
 void push_onto_notready_queue(process_t * proc);
 
 static void process_free(process_t *proc);
-
-int compare_rts_GET(realtime_t t1, realtime_t t2);
-
-int compare_rts_GT(realtime_t t1, realtime_t t2);
 
 void help_maintain();
 

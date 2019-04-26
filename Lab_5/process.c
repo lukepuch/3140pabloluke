@@ -12,10 +12,11 @@ process_t * process_tail    	= NULL;
 process_t * rt_ready_queue		= NULL;
 process_t * rt_notready_queue = NULL;
 
-int process_deadline_met;
-int process_deadline_miss;
+// Initialize these too!
+int process_deadline_met			= 0;
+int process_deadline_miss			= 0;
 
-realtime_t current_time;
+realtime_t current_time				= {0,0};
 
 
 void PIT1_IRQHandler() {
@@ -31,6 +32,9 @@ void PIT1_IRQHandler() {
 	__enable_irq();
 }
 
+//-------------------------------------------------------------------
+// pop_front_process ------------------------------------------------
+//-------------------------------------------------------------------
 process_t * pop_front_process() {
 	if (!process_queue) return NULL;
 	process_t *proc = process_queue;
@@ -42,6 +46,9 @@ process_t * pop_front_process() {
 	return proc;
 }
 
+//-------------------------------------------------------------------
+// push_tail_process ------------------------------------------------
+//-------------------------------------------------------------------
 void push_tail_process(process_t *proc) {
 	if (!process_queue) {
 		process_queue = proc;
@@ -53,9 +60,9 @@ void push_tail_process(process_t *proc) {
 	proc->next = NULL;
 }
 
-// Realtime functions:
-
-// Pop off ready queue
+//-------------------------------------------------------------------
+// pop_front_rt_ready_process ---------------------------------------
+//-------------------------------------------------------------------
 process_t * pop_front_rt_ready_process() {
 	if (!rt_ready_queue) return NULL;
 	process_t *proc = rt_ready_queue;
@@ -63,7 +70,9 @@ process_t * pop_front_rt_ready_process() {
 	return proc;	
 }
 
-// Pop off notready queue
+//-------------------------------------------------------------------
+// pop_front_rt_notready_process ------------------------------------
+//-------------------------------------------------------------------
 process_t * pop_front_rt_notready_process() {
 	if (!rt_notready_queue) return NULL;
 	process_t *proc = rt_notready_queue;
@@ -71,20 +80,10 @@ process_t * pop_front_rt_notready_process() {
 	return proc;	
 }
 
-// Adding together two realtime variables
-realtime_t* realtime_add( realtime_t* t1, realtime_t* t2 ) {  
-	realtime_t* new_time;
-  new_time->sec  = t1->sec + t2->sec;
-  new_time->msec = t1->msec + t2->msec;
-  if ( new_time->msec > 999 ){
-    new_time->msec = new_time->msec - 1000;
-    new_time->sec = new_time->sec + 1;
-	}
-	
-	return new_time;
-}
-
-// Pushing onto ready queue by earliest absolute deadline
+//-------------------------------------------------------------------
+// push_onto_ready_queue --------------------------------------------
+//-------------------------------------------------------------------
+// Push process onto ready queue, by earliest absolute deadline.
 void push_onto_ready_queue (process_t * proc){
 	if(rt_ready_queue == NULL && proc != NULL){
 		rt_ready_queue = proc;
@@ -94,7 +93,7 @@ void push_onto_ready_queue (process_t * proc){
 			{
 			process_t *temp = rt_ready_queue;
 			process_t *prev = NULL;
-			while (temp != NULL && proc->abs_deadline > temp->abs_deadline){ 
+			while (temp != NULL && proc->deadline > temp->deadline){ 
 				prev = temp;
 				temp = temp-> next;
 			}
@@ -112,7 +111,10 @@ void push_onto_ready_queue (process_t * proc){
 	}
 }
 
-// Pushing onto not ready queue by earliest start time
+//-------------------------------------------------------------------
+// push_onto_notready_queue -----------------------------------------
+//-------------------------------------------------------------------
+// Pushing onto not ready queue, by earliest start time.
 void push_onto_notready_queue(process_t * proc){
 	if(rt_notready_queue == NULL && proc != NULL){
 		rt_notready_queue = proc;
@@ -140,118 +142,95 @@ void push_onto_notready_queue(process_t * proc){
 	}
 }
 
+//-------------------------------------------------------------------
+// process_free -----------------------------------------------------
+//-------------------------------------------------------------------
 static void process_free(process_t *proc) {
 	process_stack_free(proc->orig_sp, proc->n);
 	free(proc);
 }
 
-// Compare two realtime_t vars. If t1 is greater than or equal to 
-// t2, return 1. Else return 0.
-int compare_rts_GET(realtime_t t1, realtime_t t2){
-	if(t1.sec > t2.sec){
-		return 1;
-	} else if (t1.sec < t2.sec){
-		return 0;
-	} else {
-		if(t1.msec >= t2.msec){
-			return 1;
-		} else {
-			return 0;
-		}
-	}
-}
-
-// Compare two realtime_t vars. If t1 is greater than  
-// t2, return 1. Else return 0.
-int compare_rts_GT(realtime_t t1, realtime_t t2){
-	if(t1.sec > t2.sec){
-		return 1;
-	} else if (t1.sec < t2.sec){
-		return 0;
-	} else {
-		if(t1.msec > t2.msec){
-			return 1;
-		} else {
-			return 0;
-		}
-	}
-}
-//helper function to maintain queues
+//-------------------------------------------------------------------
+// help_maintain ----------------------------------------------------
+//-------------------------------------------------------------------
+// Helper function to maintain realtime queues.
 void help_maintain() {
-		process_t* itr = rt_notready_queue;
-		while ( itr!=NULL ) { 	
-		//iterate through entire queue (or
-		//until itr reaches still-not-ready process)
-			if ( compare_rts_GET(*itr->start, current_time) == 1 ) {	
+	process_t* itr = rt_notready_queue;
+	while ( itr!=NULL ) { 	
+	//iterate through entire queue (or
+	//until itr reaches still-not-ready process)
+		unsigned int current_time_ms = 1000*current_time.sec + current_time.msec;
+		if ( itr->start > current_time_ms ) {	
 		//if itr is ready
 			push_onto_ready_queue( itr );
 			itr = itr->next;
 		}
 		else {
 			break;
-		}
-	}
+		}	
+	}	
 }
 
 /* Called by the runtime system to select another process.
    "cursp" = the stack pointer for the currently running process
 */
 unsigned int * process_select (unsigned int * cursp) {
-	help_maintain();
-	if ( cursp && ( current_process->start != NULL ) ) {
-// if process did NOT finish AND it is a realtime process
-	if(rt_ready_queue->abs_deadline < current_process->abs_deadline){
-		// if there are newly-ready processes whose deadline is earlier
-			process_t* temp = pop_front_rt_ready_process();
-			push_onto_ready_queue( current_process );
-			current_process = temp;
+	if ( cursp ) {
+		// Suspending a process which has not yet finished, save state and make it the tail
+		current_process->sp = cursp;
+		if( current_process->rt == 0 ){
+			push_tail_process(current_process);
 		}
-	}
-	else if ( cursp && ( current_process->start == NULL )  ) {
-	// if process did NOT finish AND it is NOT a realtime process
-		if ( rt_ready_queue != NULL ) {
-		// if there are ANY ready realtime processes, run the first one
-			push_tail_process( current_process );
-			current_process = pop_front_rt_ready_process();
-		}
-		else if ( process_queue != NULL ) {
-		// else, if there are normal processes, run them (do concurrency)
-			push_tail_process( current_process );
-			current_process = pop_front_process();
+		else{
+			push_onto_ready_queue(current_process);
 		}
 	}
 	else {
+		// Check if a process was running, free its resources if one just finished
 		if ( current_process ) {
-			if(current_process->start != NULL){
-				if(compare_rts_GT(*current_process->abs_deadline, current_time) == 0){
-					process_deadline_met++;
-				} else {
+			if ( current_process->rt ) {
+				unsigned int process_time_ms = 1000*current_time.sec + current_time.msec;
+				// Update global variables to show whether or not deadline was met
+				if ( process_time_ms > current_process->deadline ) {
 					process_deadline_miss++;
+				}
+				else {
+					process_deadline_met++;
 				}
 			}
 			process_free( current_process );
-			if ( rt_ready_queue != NULL ) {
-			// if a rt process is ready, run it
-				current_process = pop_front_rt_ready_process();
-			}
-			else if ( process_queue != NULL ) {
-			// else, if there are normal processes ready
-				current_process = pop_front_process();
-			}
-			else if ( rt_notready_queue != NULL ) {
-			// Nothing is ready: busy-wait for one to be ready
-				// re-enable (pause) P1 timer (real time counter)
-				NVIC_EnableIRQ(PIT1_IRQn);
-				while ( rt_ready_queue == NULL ) help_maintain();
-				// disable P1 timer (pause)
-				NVIC_DisableIRQ(PIT1_IRQn);
-			}
 		}
 	}
+	// Now, to choose the correct process.
+	// Update the queues (check for any newly ready processes)
+	help_maintain();
+	// If there are any realtime processes waiting, pop and run.
+	if( rt_ready_queue ) {
+		current_process = pop_front_rt_ready_process();
+	}
+	// Else, if no ready realtime processes, but some in process_queue.
+	else if ( rt_ready_queue == NULL && process_queue ) {
+		current_process = pop_front_process();
+	}
+	// Else, if there are no ready realtime processes, no normal processes,
+	// but some not-ready realtime processes.
+	else if ( rt_ready_queue == NULL && process_queue == NULL ) {
+		while ( rt_ready_queue == NULL ) {	// BUSY WAIT
+			help_maintain();
+		}
+		// Now, rt_ready_queue has something in it. Pop and run it.
+		current_process = pop_front_rt_ready_process();
+	}
+	
+	// Now, return sp.
+	if ( current_process ) {
+		// Launch the process which was just popped off the queue
+		return current_process->sp;
+	} else {
+		// No process was selected, exit the scheduler
+		return NULL;
+	}
 }
-
-
-
 
 /* Starts up the concurrent execution */
 void process_start (void) {
@@ -284,14 +263,11 @@ int process_create (void (*f)(void), int n) {
 		process_stack_free(sp, n);
 		return -1;
 	}
-	
-	proc->deadline 						= NULL;
-	proc->start    						= NULL;
-	proc->abs_deadline				= NULL;
-	proc->sp = proc->orig_sp 	= sp;
-	proc->n 									= n;
-	proc->blocked  						= 0;
-	proc->ready 							= 0;
+
+	proc->sp = proc->orig_sp 		= sp;
+	proc->n 										= n;
+	proc->blocked  							= 0;
+	proc->rt 										= 0;
 	
 	push_tail_process(proc);
 	return 0;
@@ -307,16 +283,15 @@ int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *dea
 		process_stack_free(sp, n);
 		return -1;
 	}	
-	  
-	proc->deadline 						= deadline;
-	proc->start              	= start;
-	proc->abs_deadline				= realtime_add(start,deadline);
+	
+	unsigned int curr_time_ms	= 1000*current_time.sec + current_time.msec;
+	proc->start								= curr_time_ms + 1000*start->sec + start->msec;
+	proc->deadline						= proc->start + 1000*deadline->sec + deadline->msec;
 	proc->sp = proc->orig_sp 	= sp;
 	proc->n 									= n;
 	proc->blocked 						= 0;
-	proc->ready								= 0;
-	
-	// TODO: push to rt_ready_queue
+	proc->rt									= 1;
+
 	push_onto_notready_queue(proc);
 	return 0;
 }
