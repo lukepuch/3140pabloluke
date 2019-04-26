@@ -214,7 +214,7 @@ unsigned int * process_select (unsigned int * cursp) {
 	}
 	// Else, if there are no ready realtime processes, no normal processes,
 	// but some not-ready realtime processes.
-	else if ( rt_ready_queue == NULL && process_queue == NULL ) {
+	else if ( rt_ready_queue == NULL && process_queue == NULL && rt_notready_queue ) {
 		while ( rt_ready_queue == NULL ) {	// BUSY WAIT
 			help_maintain();
 		}
