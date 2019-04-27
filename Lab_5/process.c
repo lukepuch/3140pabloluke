@@ -103,7 +103,7 @@ process_t * pop_rt_process() {
 // push_onto_rt_queue --------------------------------------------
 //-------------------------------------------------------------------
 // Push the process onto the rt_queue: order by EDF.
-void push_onto_rt_queue (process_t * proc){
+void push_onto_rt_queue (process_t * proc) {
 	// If rt queue is empty:
 	if( rt_queue == NULL ) {
 		rt_queue = proc;
@@ -140,81 +140,90 @@ static void process_free(process_t *proc) {
 }
 
 //-------------------------------------------------------------------
-// get_next_ready_time ----------------------------------------------
+// get_next_start_time ----------------------------------------------
 //-------------------------------------------------------------------
-// Helper function to maintain realtime queues.
-int getproc(){
-	process_t * current_proc = queue_of_rt;
-	int nextReadyTime = current_proc->start;
-	current_proc = current_proc->next;
-	while(current_proc != NULL){
-		if(current_proc->start < nextReadyTime){
-			nextReadyTime = current_proc->start;
+// Returns the earliest absolute start time.
+int get_next_start_time() {
+	process_t * itr = rt_queue;
+	int next_start_time = itr->start;
+	itr = itr->next;
+	// Iterate through to get earliest start time.
+	while ( itr != NULL ) {
+		if ( itr->start < next_start_time ) {
+			next_start_time = itr->start;
 		}
-		current_proc = current_proc->next;
+		itr = itr->next;
 	}
-	return nextReadyTime;
+	return next_start_time;
 }
 
 /* Called by the runtime system to select another process.
    "cursp" = the stack pointer for the currently running process
 */
 unsigned int * process_select (unsigned int * cursp) {
+	// If a process didn't finish:
 	if ( cursp ) {
-		// Suspending a process which has not yet finished, save state and make it the tail
 		current_process->sp = cursp;
-		if( current_process->rt == 0 ){
-			push_tail_process(current_process);
+		// If it's a realtime process, push it onto rt_queue
+		if ( current_process -> rt != 0 ) {
+			push_onto_rt_queue(current_process);
 		}
-		else{
-			push_onto_ready_queue(current_process);
+		// Otherwise, it's a normall process; push to process_queue
+		else {
+			push_tail_process(current_process);
 		}
 	}
 	else {
-		// Check if a process was running, free its resources if one just finished
+		// Process finished.
 		if ( current_process ) {
+			// If it's an rt process, see if it met it's deadline before freeing it.
 			if ( current_process->rt ) {
-				unsigned int process_time_ms = 1000*current_time.sec + current_time.msec;
-				// Update global variables to show whether or not deadline was met
-				if ( process_time_ms > current_process->deadline ) {
-					process_deadline_miss++;
-				}
-				else {
+				unsigned int curr_time = 1000*current_time.sec + current_time.msec;
+				if ( curr_time <= current_process->deadline ) {
 					process_deadline_met++;
 				}
+				else {
+					process_deadline_miss++;
+				}
 			}
-			process_free( current_process );
+			process_free(current_process);
 		}
 	}
-	// Now, to choose the correct process.
-	// Update the queues (check for any newly ready processes)
-	help_maintain();
-	// If there are any realtime processes waiting, pop and run.
-	if( rt_ready_queue ) {
-		current_process = pop_front_rt_ready_process();
-	}
-	// Else, if no ready realtime processes, but some in process_queue.
-	else if ( rt_ready_queue == NULL && process_queue ) {
+	
+	// Now, to load the correct process.
+	// If there are no realtime processes, run from process_queue.
+	if ( rt_queue == NULL ) {
 		current_process = pop_front_process();
 	}
-	// Else, if there are no ready realtime processes, no normal processes,
-	// but some not-ready realtime processes.
-	else if ( rt_ready_queue == NULL && process_queue == NULL && rt_notready_queue ) {
-		unsigned int next_ready_start = rt_notready_queue->start;
-		__enable_irq();
-		while ( 1000*current_time.sec + current_time.msec < next_ready_start ) {	// BUSY WAIT
+	else {
+		process_t * temp = pop_rt_process();
+		// If pop_rt_process returns NULL, that means no rt
+		// processes are ready. If there are also no processes in
+		// process queue, then we must busy-wait until a rt process
+		// becomes read.
+		if ( temp == NULL && process_queue == NULL ) {
+			int delay = get_next_start_time();
+			__enable_irq();
+			while ( ( 1000*current_time.sec + current_time.msec ) < delay );	// BUSY WAIT!
+			__disable_irq();
+			// Now, pop_rt_process should return a non-NULL process.
+			current_process = pop_rt_process();
 		}
-		__disable_irq();
-		help_maintain();
-		// Now, rt_ready_queue has something in it. Pop and run it.
-		current_process = pop_front_rt_ready_process();
+		// If there are no ready realtime processes, but some processes in
+		// process queue, pop from process queue.
+		else if ( temp == NULL && process_queue != NULL ) {
+			current_process = pop_front_process();
+		}
+		else {
+			current_process = temp;
+		}
 	}
-	// Now, return sp.
+	
+	// Now, return the stack pointer.
 	if ( current_process ) {
-		// Launch the process which was just popped off the queue
 		return current_process->sp;
-	} else {
-		// No process was selected, exit the scheduler
+	}
+	else {
 		return NULL;
 	}
 }
@@ -231,9 +240,9 @@ void process_start (void) {
 	NVIC_EnableIRQ(PIT1_IRQn);
 	
 	// Priorities
-	NVIC_SetPriority(SVCall_IRQn, 1);
-	NVIC_SetPriority(PIT0_IRQn, 1);
-	NVIC_SetPriority(PIT1_IRQn, 0);	// PIT1 is highest priority
+	//NVIC_SetPriority(SVCall_IRQn, 1);
+	//NVIC_SetPriority(PIT0_IRQn, 1);
+	//NVIC_SetPriority(PIT1_IRQn, 0);	// PIT1 is highest priority
 	
 	PIT->CHANNEL[1].TCTRL = PIT_TCTRL_TIE_MASK;
 	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN_MASK;
