@@ -1,26 +1,21 @@
-//#include "process.h"
 #include "realtime.h"
 #include "3140_concur.h"
 #include <fsl_device_registers.h>
 #include "shared_structs.h"
 
-/* the currently running process. current_process must be NULL if no process is running,
-    otherwise it must point to the process_t of the currently running process
-*/
+// Pablo & Luke's process.c
 
 process_t * current_process 	= NULL; 
 process_t * process_queue   	= NULL;
 process_t * process_tail    	= NULL;
 
-process_t * rt_ready_queue		= NULL;
-process_t * rt_notready_queue = NULL;
+process_t * rt_queue					= NULL;
 
 // Initialize these too!
 int process_deadline_met			= 0;
 int process_deadline_miss			= 0;
 
 realtime_t current_time				= {0,0};
-
 
 void PIT1_IRQHandler() {
 	//__disable_irq();
@@ -31,6 +26,10 @@ void PIT1_IRQHandler() {
 	} else {
 		current_time.msec++;
 	}
+	
+	PIT -> CHANNEL[1].TCTRL = 0;
+	PIT -> CHANNEL[1].TFLG |= PIT_TFLG_TIF_MASK;
+	PIT -> CHANNEL[1].TCTRL = PIT_TCTRL_TEN_MASK| PIT_TCTRL_TIE_MASK;
 	
 	//__enable_irq();
 }
@@ -64,85 +63,70 @@ void push_tail_process(process_t *proc) {
 }
 
 //-------------------------------------------------------------------
-// pop_front_rt_ready_process ---------------------------------------
+// pop_rt_process ---------------------------------------------------
 //-------------------------------------------------------------------
-process_t * pop_front_rt_ready_process() {
-	if (!rt_ready_queue) return NULL;
-	process_t *proc = rt_ready_queue;
-	rt_ready_queue = proc->next;
-	return proc;	
-}
-
-//-------------------------------------------------------------------
-// pop_front_rt_notready_process ------------------------------------
-//-------------------------------------------------------------------
-process_t * pop_front_rt_notready_process() {
-	if (!rt_notready_queue) return NULL;
-	process_t *proc = rt_notready_queue;
-	rt_notready_queue = proc->next;
-	return proc;	
-}
-
-//-------------------------------------------------------------------
-// push_onto_ready_queue --------------------------------------------
-//-------------------------------------------------------------------
-// Push process onto ready queue, by earliest absolute deadline.
-void push_onto_ready_queue (process_t * proc){
-	if(rt_ready_queue == NULL && proc != NULL){
-		rt_ready_queue = proc;
-		proc->next = NULL;
-	}		
-	else{
-		if(proc != NULL)
-			{
-			process_t *temp = rt_ready_queue;
-			process_t *prev = NULL;
-			while (temp != NULL && proc->deadline > temp->deadline){ 
-				prev = temp;
-				temp = temp-> next;
+// Returns a realtime process with earliest deadline out of all the
+// processes that are ready (rt_queue is ordered by EDF).
+process_t * pop_rt_process() {
+	int curr_time = 1000 * current_time.sec + current_time.msec;
+	process_t * temp = rt_queue;
+	// If rt_queue is empty, return NULL.
+	if ( !temp ) {
+		return NULL;
+	}
+	// If first rt-process is "ready", pop it.
+	else if( temp -> start < curr_time ) {
+		rt_queue = temp -> next;
+		temp -> next = NULL;
+		return temp;
+	}
+	// Otherwise, iterate through rt_queue until you find
+	// a "ready" process.
+  else {
+		while ( temp->next != NULL ) {
+			if ( temp->next->start <= curr_time ) {
+				process_t * proc = temp -> next;
+				temp -> next = proc -> next;
+				proc -> next = NULL;
+				return proc;
 			}
-			if(temp == rt_ready_queue) { // Condition for earliest deadline in queue
-				proc->next = rt_ready_queue;
-				rt_ready_queue = proc;
-			} else if(temp != NULL && prev != NULL) { // Condition for deadline in middle of queue
-				prev->next = proc;
-				proc->next = temp;				
-			} else { // Condition for latest deadline
-				prev->next = proc;
-				proc->next = NULL;
+			else {
+				temp = temp->next;
 			}
 		}
 	}
+	// No ready processes found, return NULL.
+	return NULL;
 }
 
 //-------------------------------------------------------------------
-// push_onto_notready_queue -----------------------------------------
+// push_onto_rt_queue --------------------------------------------
 //-------------------------------------------------------------------
-// Pushing onto not ready queue, by earliest start time.
-void push_onto_notready_queue(process_t * proc){
-	if(rt_notready_queue == NULL && proc != NULL){
-		rt_notready_queue = proc;
+// Push the process onto the rt_queue: order by EDF.
+void push_onto_rt_queue (process_t * proc){
+	// If rt queue is empty:
+	if( rt_queue == NULL ) {
+		rt_queue = proc;
 		proc->next = NULL;
 	}		
 	else {
-		if(proc != NULL)
-			{
-			process_t *temp = rt_notready_queue;
-			process_t *prev = NULL;
-			while (temp != NULL && proc->start > temp->start){
-				prev = temp;
-				temp = temp-> next;
+		// If proc has the earliest deadline in the entire queue, put it
+		// in the front.
+		if( rt_queue -> deadline > proc -> deadline ) {
+			proc->next = rt_queue;
+			rt_queue = proc;
+			return;
+		}
+		// Otherwise, iterate until we reach a process whose deadline is bigger
+		else {
+			process_t * prev = NULL;
+			process_t * itr = rt_queue;
+			while ( itr != NULL && itr->deadline <= proc->deadline ) {
+				prev = itr;
+				itr = itr->next;
 			}
-			if(temp == rt_notready_queue) { // Condition for earliest start in queue
-				proc->next = rt_notready_queue;
-				rt_notready_queue = proc;
-			} else if(temp != NULL && prev != NULL) { // Condition for start in middle of deadline
-				prev->next = proc;
-				proc->next = temp;				
-			} else { // Condition for latest start in queue
-				prev->next = proc;
-				proc->next = NULL;
-			}
+			proc->next = itr;
+			prev->next = proc;
 		}
 	}
 }
@@ -156,24 +140,20 @@ static void process_free(process_t *proc) {
 }
 
 //-------------------------------------------------------------------
-// help_maintain ----------------------------------------------------
+// get_next_ready_time ----------------------------------------------
 //-------------------------------------------------------------------
 // Helper function to maintain realtime queues.
-void help_maintain() {
-	process_t* itr = rt_notready_queue;
-	while ( itr!=NULL ) { 	
-	//iterate through entire queue (or
-	//until itr reaches still-not-ready process)
-		unsigned int current_time_ms = 1000*current_time.sec + current_time.msec;
-		if ( itr->start > current_time_ms ) {	
-		//if itr is ready
-			push_onto_ready_queue( itr );
-			itr = itr->next;
+int getproc(){
+	process_t * current_proc = queue_of_rt;
+	int nextReadyTime = current_proc->start;
+	current_proc = current_proc->next;
+	while(current_proc != NULL){
+		if(current_proc->start < nextReadyTime){
+			nextReadyTime = current_proc->start;
 		}
-		else {
-			break;
-		}	
-	}	
+		current_proc = current_proc->next;
+	}
+	return nextReadyTime;
 }
 
 /* Called by the runtime system to select another process.
@@ -220,11 +200,12 @@ unsigned int * process_select (unsigned int * cursp) {
 	// Else, if there are no ready realtime processes, no normal processes,
 	// but some not-ready realtime processes.
 	else if ( rt_ready_queue == NULL && process_queue == NULL && rt_notready_queue ) {
-		__enable_irq();			//
-		while ( rt_ready_queue == NULL ) {	// BUSY WAIT
-			help_maintain();	//
+		unsigned int next_ready_start = rt_notready_queue->start;
+		__enable_irq();
+		while ( 1000*current_time.sec + current_time.msec < next_ready_start ) {	// BUSY WAIT
 		}
 		__disable_irq();
+		help_maintain();
 		// Now, rt_ready_queue has something in it. Pop and run it.
 		current_process = pop_front_rt_ready_process();
 	}
@@ -248,10 +229,12 @@ void process_start (void) {
 	// Lab5 Code
 	PIT->CHANNEL[1].LDVAL = DEFAULT_SYSTEM_CLOCK / 1000;
 	NVIC_EnableIRQ(PIT1_IRQn);
+	
+	// Priorities
 	NVIC_SetPriority(SVCall_IRQn, 1);
 	NVIC_SetPriority(PIT0_IRQn, 1);
 	NVIC_SetPriority(PIT1_IRQn, 0);	// PIT1 is highest priority
-	// Don't enable the timer yet. The scheduler will do so itself
+	
 	PIT->CHANNEL[1].TCTRL = PIT_TCTRL_TIE_MASK;
 	PIT->CHANNEL[1].TCTRL |= PIT_TCTRL_TEN_MASK;
 
@@ -301,6 +284,6 @@ int process_rt_create(void (*f)(void), int n, realtime_t *start, realtime_t *dea
 	proc->rt									= 1;
 
 	proc->next								= NULL;
-	push_onto_notready_queue(proc);
+	push_onto_rt_queue(proc);
 	return 0;
 }

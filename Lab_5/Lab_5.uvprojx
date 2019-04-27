@@ -403,11 +403,6 @@
               <FilePath>.\process.c</FilePath>
             </File>
             <File>
-              <FileName>process.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\process.h</FilePath>
-            </File>
-            <File>
               <FileName>utils.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\utils.c</FilePath>
