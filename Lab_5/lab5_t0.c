@@ -44,8 +44,13 @@ realtime_t t_pRT1 = {1, 0};
 /*------------------*/
 /* Helper functions */
 /*------------------*/
-void shortDelay(){delay();}
-void mediumDelay() {delay(); delay();}
+void shortDelay(){
+//delay();
+	}
+void mediumDelay() {
+//delay(); 
+	//delay();
+	}
 
 
 

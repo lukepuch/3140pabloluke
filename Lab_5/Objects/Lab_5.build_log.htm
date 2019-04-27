@@ -5,7 +5,7 @@
 <h2>Tool Versions:</h2>
 IDE-Version: µVision V5.26.2.0
 Copyright (C) 2018 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Luke Puchalla, Cornell University, LIC=----
+License Information: Pablo Ruiz, Cornell University, LIC=----
  
 Tool Versions:
 Toolchain:       MDK-Lite  Version: 5.26.2.0
@@ -21,24 +21,24 @@ Target DLL:      CMSIS_AGDI.dll V1.30.6.0
 Dialog DLL:      TCM.DLL V1.36.1.0
  
 <h2>Project:</h2>
-C:\Users\lukep\Documents\College\Cornell\Spring 2019\ECE 3140\3140pabloluke\Lab_5\Lab_5.uvprojx
+C:\Users\Pablo Ruiz\Documents\Junior College Stuff\ECE 3140\3140pabloluke\Lab_5\Lab_5.uvprojx
 Project File Date:  04/27/2019
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
 Rebuild target 'Target 1'
 assembling 3140.s...
-compiling 3140_concur.c...
-compiling utils.c...
-compiling process.c...
 assembling startup_MK64F12.s...
+compiling utils.c...
 compiling system_MK64F12.c...
+compiling process.c...
 compiling lab5_t0.c...
-lab5_t0.c(109): warning:  #111-D: statement is unreachable
+lab5_t0.c(114): warning:  #111-D: statement is unreachable
   	return 0;
 lab5_t0.c: 1 warning, 0 errors
+compiling 3140_concur.c...
 linking...
-Program Size: Code=2508 RO-data=1056 RW-data=68 ZI-data=2048  
+Program Size: Code=2476 RO-data=1056 RW-data=68 ZI-data=2048  
 ".\Objects\Lab_5.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
@@ -66,13 +66,13 @@ Package Vendor: NXP
    * Component: ARM::CMSIS:CORE:5.1.2
 
    * Component: NXP::Device:Startup:MK64F12_startup:1.0.0
-      Include file:  MK64F12.h
-      Source file:   arm\startup_MK64F12.s
+      Include file:  fsl_device_registers.h
       Include file:  MK64F12_features.h
       Source file:   system_MK64F12.c
+      Include file:  MK64F12.h
+      Source file:   arm\startup_MK64F12.s
       Include file:  system_MK64F12.h
-      Include file:  fsl_device_registers.h
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

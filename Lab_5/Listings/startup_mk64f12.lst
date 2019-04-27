@@ -700,7 +700,7 @@ rK6, BackDoorK7
   454 00000000                 REQUIRE          FlashConfig
   455 00000000                 ENDIF
   456 00000000         
-  457 00000000 B672            CPSID            I           ; Mask interrupts
+  457 00000000 B672    ds      CPSID            I           ; Mask interrupts
   458 00000002 483C            LDR              R0, =0xE000ED08
   459 00000004 493C            LDR              R1, =__Vectors
   460 00000006 6001            STR              R1, [R0]
@@ -3157,7 +3157,15 @@ Symbol: WDOG_EWM_IRQHandler
       At line 72 in file RTE\Device\MK64FN1M0VLL12\startup_MK64F12.s
       At line 884 in file RTE\Device\MK64FN1M0VLL12\startup_MK64F12.s
 
-143 symbols
+ds 00000000
+
+Symbol: ds
+   Definitions
+      At line 457 in file RTE\Device\MK64FN1M0VLL12\startup_MK64F12.s
+   Uses
+      None
+Comment: ds unused
+144 symbols
 
 
 
@@ -3398,4 +3406,4 @@ Symbol: __main
       At line 466 in file RTE\Device\MK64FN1M0VLL12\startup_MK64F12.s
 Comment: __main used once
 3 symbols
-515 symbols in table
+516 symbols in table

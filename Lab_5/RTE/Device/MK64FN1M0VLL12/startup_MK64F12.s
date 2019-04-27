@@ -454,7 +454,7 @@ Reset_Handler   PROC
                 REQUIRE FlashConfig
                 ENDIF
 
-                CPSID   I               ; Mask interrupts
+ds                CPSID   I               ; Mask interrupts
                 LDR     R0, =0xE000ED08
                 LDR     R1, =__Vectors
                 STR     R1, [R0]
