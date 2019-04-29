@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>Lab_5</OutputName>
+          <OutputName>LAB_5</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -383,24 +383,9 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>3140.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\3140.s</FilePath>
-            </File>
-            <File>
               <FileName>3140_concur.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\3140_concur.c</FilePath>
-            </File>
-            <File>
-              <FileName>3140_concur.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\3140_concur.h</FilePath>
-            </File>
-            <File>
-              <FileName>process.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\process.c</FilePath>
             </File>
             <File>
               <FileName>utils.c</FileName>
@@ -408,9 +393,14 @@
               <FilePath>.\utils.c</FilePath>
             </File>
             <File>
-              <FileName>utils.h</FileName>
+              <FileName>process_woah.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\process_woah.c</FilePath>
+            </File>
+            <File>
+              <FileName>3140_concur.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\utils.h</FilePath>
+              <FilePath>.\3140_concur.h</FilePath>
             </File>
             <File>
               <FileName>realtime.h</FileName>
@@ -418,14 +408,24 @@
               <FilePath>.\realtime.h</FilePath>
             </File>
             <File>
-              <FileName>lab5_t0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\lab5_t0.c</FilePath>
-            </File>
-            <File>
               <FileName>shared_structs.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\shared_structs.h</FilePath>
+            </File>
+            <File>
+              <FileName>utils.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\utils.h</FilePath>
+            </File>
+            <File>
+              <FileName>3140.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\3140.s</FilePath>
+            </File>
+            <File>
+              <FileName>test_r2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\test_r2.c</FilePath>
             </File>
           </Files>
         </Group>

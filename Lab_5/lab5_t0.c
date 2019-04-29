@@ -38,19 +38,14 @@ realtime_t t_1msec = {0, 1};
 realtime_t t_10sec = {10, 0};
 
 /* Process start time */
-realtime_t t_pRT1 = {1, 0};
+realtime_t t_pRT1 = {0, 50};
 
  
 /*------------------*/
 /* Helper functions */
 /*------------------*/
-void shortDelay(){
-//delay();
-	}
-void mediumDelay() {
-//delay(); 
-	//delay();
-	}
+void shortDelay(){delay();}
+void mediumDelay() {delay(); delay();}
 
 
 
